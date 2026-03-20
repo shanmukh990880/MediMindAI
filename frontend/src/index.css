@@ -26,6 +26,28 @@ body {
   line-height: 1.5;
 }
 
+:focus-visible {
+  outline: 2px solid #818cf8;
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-dark);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-glass);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #6366f1;
+}
+
 .glass-card {
   background: var(--bg-card);
   backdrop-filter: blur(12px);
