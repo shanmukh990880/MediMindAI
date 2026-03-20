@@ -12,19 +12,27 @@ class LLMClient:
     def __init__(self, model_name: str = "gemini-1.5-flash"):
         self.project_id = settings.GOOGLE_CLOUD_PROJECT
         self.location = settings.GOOGLE_CLOUD_LOCATION
-        
         try:
-            # Attempt initialization. vertexai.init will handle None project by looking at ADC/gcloud config.
-            vertexai.init(project=self.project_id, location=self.location)
+            # 1. First choice: Pydantic settings
+            # 2. Second choice: Environment variable directly
+            # 3. Third choice: vertexai.init() which falls back to ADC or gcloud config
+            project = self.project_id or os.environ.get("GOOGLE_CLOUD_PROJECT")
+            location = self.location or os.environ.get("GOOGLE_CLOUD_LOCATION", "us-central1")
+            
+            logger.info(f"Initializing Vertex AI. Project: {project or 'None (ADC)'}, Location: {location}")
+            
+            vertexai.init(project=project, location=location)
             # Use json mode to guarantee JSON output
             self.model = GenerativeModel(
                 model_name,
                 generation_config={"response_mime_type": "application/json"}
             )
-            logger.info(f"Vertex AI initialized with project: {self.project_id or 'ADC Default'}")
+            self.initialized = True
+            logger.info(f"Vertex AI successfully initialized.")
         except Exception as e:
-            logger.error(f"Failed to initialize Vertex AI: {e}")
+            logger.error(f"Failed to initialize Vertex AI: {e}", exc_info=True)
             self.model = None
+            self.initialized = False
 
     async def generate_json(self, prompt: str, fallback_data: dict) -> dict:
         """Executes LLM call and returns strictly parsed JSON dictionary."""
