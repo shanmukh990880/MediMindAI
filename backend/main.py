@@ -11,6 +11,18 @@ from backend.core.errors import app_exception_handler, general_exception_handler
 from backend.core.rate_limiter import limiter
 from backend.api.routes import health, pdf
 
+# GCP Monitoring
+try:
+    from google.cloud import error_reporting
+    from opentelemetry import trace
+    from opentelemetry.sdk.trace import TracerProvider
+    from opentelemetry.sdk.trace.export import SimpleSpanProcessor
+    from opentelemetry.exporter.cloud_trace import CloudTraceSpanExporter
+    from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+    MONITORING_AVAILABLE = True
+except ImportError:
+    MONITORING_AVAILABLE = False
+
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 
 def create_app() -> FastAPI:
@@ -40,6 +52,32 @@ def create_app() -> FastAPI:
     # Routers
     app.include_router(health.router, prefix=settings.API_V1_STR)
     app.include_router(pdf.router, prefix=settings.API_V1_STR)
+
+    # Initialize Monitoring if on GCP
+    if MONITORING_AVAILABLE and settings.ENV != "development":
+        try:
+            # 1. Cloud Trace
+            trace.set_tracer_provider(TracerProvider())
+            cloud_trace_exporter = CloudTraceSpanExporter(project_id=settings.GOOGLE_CLOUD_PROJECT)
+            trace.get_tracer_provider().add_span_processor(
+                SimpleSpanProcessor(cloud_trace_exporter)
+            )
+            FastAPIInstrumentor.instrument_app(app)
+            
+            # 2. Error Reporting
+            error_client = error_reporting.Client(project=settings.GOOGLE_CLOUD_PROJECT)
+            # Middleware to report exceptions to GCP
+            @app.middleware("http")
+            async def error_reporting_middleware(request, call_next):
+                try:
+                    return await call_next(request)
+                except Exception as e:
+                    error_client.report_exception()
+                    raise e
+            
+            logging.info("GCP Trace and Error Reporting initialized.")
+        except Exception as e:
+            logging.warning(f"Failed to initialize GCP Monitoring: {e}")
 
     return app
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { simplifyReport, type SimplificationResponse, type InsightBase } from './services/api';
+import { simplifyReport, type SimplificationResponse } from './services/api';
 import './index.css';
 
 const ConfidenceBadge: React.FC<{ score: number }> = ({ score }) => {

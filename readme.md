@@ -19,9 +19,13 @@ MediBrief AI V2 transforms complex medical PDFs into accessible, patient-friendl
 ## 🏗️ Architecture Stack
 
 - **Frontend**: React (TypeScript), CSS Modules/Vanilla
-- **Backend API**: FastAPI, Uvicorn, Python 3.13
-- **LLM Engine**: Google Vertex AI (`gemini-1.5-flash`) with Strict JSON output mode.
-- **Cloud Hosting**: Google Cloud Run (Serverless computing containerized)
+- **Backend**: FastAPI (Python 3.12+)
+- **Frontend**: React + TypeScript + Vite
+- **AI/ML**: Vertex AI (Gemini 1.5 Flash), Google Document AI
+- **Infrastructure**: Google Cloud Run, Artifact Registry, GCS
+- **Monitoring**: Google Cloud Trace, Error Reporting, Cloud Logging
+- **Security**: Secret Manager, IAM Service Accounts
+**: Google Cloud Run (Serverless computing containerized)
 - **CI/CD Testing**: PyTest, PyTest-Mock
 
 ---
