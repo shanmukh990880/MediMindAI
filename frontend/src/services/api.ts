@@ -1,4 +1,4 @@
-const API_BASE = "http://localhost:8080";
+const API_BASE = window.location.origin === "http://localhost:5173" ? "http://localhost:8080" : "";
 
 export interface SimplificationResponse {
   id: string;

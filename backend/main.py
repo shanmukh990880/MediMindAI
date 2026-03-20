@@ -40,8 +40,8 @@ class SimplificationResponse(BaseModel):
     medication_timeline: List[Medication]
     doctor_report: str
 
-@app.get("/")
-async def root():
+@app.get("/api/health")
+async def health():
     return {"message": "MediBrief AI API is running"}
 
 @app.post("/simplify", response_model=SimplificationResponse)

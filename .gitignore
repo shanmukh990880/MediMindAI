@@ -1,0 +1,46 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environments
+venv/
+ENV/
+.env
+
+# Node.js
+node_modules/
+dist/
+build/
+.npm
+*.log
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS related
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Project-specific
+yes/
+google-cloud-sdk/
+.config/
+backend/venv/
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+
+# Artifacts
+.gemini/
+.agents/
+.agent/
+brain/
